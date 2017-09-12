@@ -16,6 +16,17 @@ ep = 1e-5; % for stability
 assert(hyper_params.filter_depth == num_channels, 'Filter depth does not match number of input channels');
 output = zeros(out_height,out_width,num_channels,batch_size);
 % TODO: FORWARD CODE
+mean_x = mean(reshape(input, [], num_channels, batch_size), 1);
+variance_x = var(reshape(input, [], num_channels, batch_size), 1, 1);
+for i = 1 : out_height
+    for j = 1 : out_width
+        output(i, j, :, :) = squeeze(input(i, j, :, :)) - squeeze(mean_x) ./ sqrt(squeeze(variance_x) + ep);
+    end
+end
+
+for i = 1:hyper_params.filter_depth
+    output(:, :, i, :) = output(:, :, i, :) .* params.W(i) + params.b(i);
+end
 
 dv_input = [];
 grad = struct('W',[],'b',[]);
