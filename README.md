@@ -1,2 +1,2 @@
-# eecs-542
+# EECS-542
 Adv Topics of Comp Vis, University of Michigan
