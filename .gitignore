@@ -1,0 +1,8 @@
+*.mat
+*.log
+test_output.txt
+*.sh
+*.pbs
+*.pdf
+*.eps
+jobs.txt

@@ -1,5 +1,5 @@
 % Basic script to create a new network model
-
+load_MNIST_data;
 addpath layers;
 
 l = [init_layer('conv',struct('filter_size',5,'filter_depth',1,'num_filters',6))
@@ -17,12 +17,10 @@ l = [init_layer('conv',struct('filter_size',5,'filter_depth',1,'num_filters',6))
 model = init_model(l,[28 28 1],10,true);
 
 % Example calls you might make:
-numIters = 10;
+numIters = 50;
 [model, loss] = train(model,struct('train', train_data, 'test', test_data)...
     , struct('train', train_label, 'test', test_label)...
-    , struct('learning_rate', 0.03, 'weight_decay', .0005, 'batch_size', 100),numIters);
+    , struct('learning_rate', 0.03, 'weight_decay', .0005, 'batch_size', 1000),numIters);
 %trained_model = load('save_file.mat');
-batch_size = 100;
-accuracy = test_CNN(model, test_data, test_label);
 
 % fprintf('Accuracy: %.2f%% \n',accuracy * 100);

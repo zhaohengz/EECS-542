@@ -32,6 +32,13 @@ for i = 1 : num_layers
 end
 training_loss = [];
 test_loss = [];
+accuracy_list = [];
+
+handle = datestr(datetime('now'));
+
+log_file = sprintf('log/train-%s-%f-%f-%f.log', handle, update_params.learning_rate...
+    , update_params.weight_decay, update_params.momentum);
+fid = fopen(log_file, 'w');
 
 for i = 1:numIters
 	% TODO: Training code
@@ -44,13 +51,31 @@ for i = 1:numIters
         training_loss = [training_loss, loss];
         [grad] = calc_gradient(model, batch_input, activations, dv_input);
         [model, velocity] = update_weights(model, grad, velocity, update_params);
-        fprintf('Training loss after Epoch %d Batch %d: %f\n', i, j, loss);
+        msg_1 = sprintf('Training loss after epoch %d batch %d: %f', i, j, loss);
         [output, activations] = inference(model, input.test);
         [loss, ~] = loss_crossentropy(output, label.test, [], false);
         test_loss = [test_loss, loss];
-        fprintf('Test loss:%f\n', loss);
+        msg_2 = sprintf('Test loss:%f', loss);
+        if mod(j, 20) == 0
+            fprintf('%s, %s\n', msg_1, msg_2);
+            fprintf(fid, '%s, %s\n', msg_1, msg_2);
+        end
     end
     update_params.momentum = 0.9;
+    accuracy = test_CNN(model, input.test, label.test, 10000);
+    accuracy_list = [accuracy_list accuracy];
+
+    model_file = sprintf('models/train-%d-%s-%f-%f-%f.mat', i, handle, update_params.learning_rate...
+    , update_params.weight_decay, update_params.momentum);
+    save(model_file, 'model');
+
+    loss_file = sprintf('loss/train-%d-%s-%f-%f-%f.mat', i, handle, update_params.learning_rate...
+    , update_params.weight_decay, update_params.momentum); 
+    save(loss_file, 'training_loss', 'test_loss', 'accuracy');
+
+    fprintf('Accuracy after epoch %d: %f\n', i, accuracy);
+    fprintf(fid, 'Accuracy after epoch %d: %f\n', i, accuracy);
 end
 
+fclose(fid);
 loss = [train_loss, test_loss];

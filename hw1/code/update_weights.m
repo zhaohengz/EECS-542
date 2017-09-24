@@ -13,6 +13,6 @@ for i = 1 : num_layers
     temp.W = a * grad{i}.W + p * last_v{i}.W;
     temp.b = a * grad{i}.b + p * last_v{i}.b;
     velocity{i} = temp;
-    updated_model.layers(i).params.W = updated_model.layers(i).params.W - temp.W;
-    updated_model.layers(i).params.b = updated_model.layers(i).params.b - temp.b;
+    updated_model.layers(i).params.W = updated_model.layers(i).params.W * (1 - a * lmda) - temp.W;
+    updated_model.layers(i).params.b = updated_model.layers(i).params.b * (1 - a * lmda) - temp.b;
 end
