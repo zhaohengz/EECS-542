@@ -6,3 +6,4 @@ test_output.txt
 *.pdf
 *.eps
 jobs.txt
+!*/report.pdf
